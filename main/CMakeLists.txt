@@ -1,0 +1,35 @@
+set(COMPONENT_SRCS
+    "${CMAKE_CURRENT_LIST_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/I2C/i2cDriver.c"
+    "${CMAKE_CURRENT_LIST_DIR}/WIFI/WiFiDriver.c"
+    "${CMAKE_CURRENT_LIST_DIR}/WS2812B/ws2812b.c"
+    "${CMAKE_CURRENT_LIST_DIR}/SENSOR/sgp30Driver.c"
+    "${CMAKE_CURRENT_LIST_DIR}/SENSOR/sgp30Read.c"
+    "${CMAKE_CURRENT_LIST_DIR}/SENSOR/sensorRead.c"
+    "${CMAKE_CURRENT_LIST_DIR}/AWS/aws.c"
+    "${CMAKE_CURRENT_LIST_DIR}/NVS/NVSDriver.c"
+    "${CMAKE_CURRENT_LIST_DIR}/NEXTION/nextion.c"
+    "${CMAKE_CURRENT_LIST_DIR}/LORA/loradev.c"
+    "${CMAKE_CURRENT_LIST_DIR}/BASIC/appTask.c"
+    "app_main.c"
+)
+
+set(COMPONENT_ADD_INCLUDEDIRS
+    "${CMAKE_CURRENT_LIST_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/INCLUDE"
+    "${CMAKE_CURRENT_LIST_DIR}/AWS"
+    "${CMAKE_CURRENT_LIST_DIR}/I2C"
+    "${CMAKE_CURRENT_LIST_DIR}/NVS"
+    "${CMAKE_CURRENT_LIST_DIR}/SENSOR"
+    "${CMAKE_CURRENT_LIST_DIR}/WIFI"
+    "${CMAKE_CURRENT_LIST_DIR}/WS2812B"
+    "${CMAKE_CURRENT_LIST_DIR}/LORA"
+    "${CMAKE_CURRENT_LIST_DIR}/BASIC"
+    "${IDF_PATH}/components/freertos/include/freertos"
+    "${IDF_PATH}/components/mbedtls"
+    "${IDF_PATH}/components/driver" 
+)
+
+idf_component_register(SRCS ${COMPONENT_SRCS}
+                    INCLUDE_DIRS ${COMPONENT_ADD_INCLUDEDIRS}
+)
