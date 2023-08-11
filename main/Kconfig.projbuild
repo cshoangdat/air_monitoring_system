@@ -1,15 +1,17 @@
 # put here your custom config value
-menu "Example Configuration"
-config ESP_WIFI_SSID
-    string "WiFi SSID"
-    default "myssid"
-    help
-	SSID (network name) for the example to connect to.
-
-config ESP_WIFI_PASSWORD
-    string "WiFi Password"
-    default "mypassword"
-    help
-	WiFi password (WPA or WPA2) for the example to use.
-endmenu
-
+# menu "Application Configuration"
+# 	choice DIRECTION
+# 		prompt "Communication polarity"
+# 		default SENDER
+# 		help
+# 			Select Communication polarity.
+# 		config SENDER
+# 			bool "As the sender"
+# 			help
+# 				As the sender.
+# 		config RECEIVER
+# 			bool "As the receiver"
+# 			help
+# 				As the receiver.
+# 	endchoice
+# endmenu

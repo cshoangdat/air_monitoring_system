@@ -34,11 +34,19 @@ void app_main(void)
     ESP_LOGI(TAG, "IDF version: %s", esp_get_idf_version());
     appSetUp();
     SensorRead();
-    NextionRun();
-    esp_err_t err = WiFiDriverConnect(WifiData.WifiName, WifiData.WifiPass);
-    if(err != ESP_OK){
-        ESP_LOGE(TAG, "WiFi Driver Connect Failed");
+    LoraInit();
+    if(setUp.isDevCen == true){ 
+        NextionRun();
+        LoraRev();
+        esp_err_t err = WiFiDriverConnect(WifiData.WifiName, WifiData.WifiPass);
+        if(err != ESP_OK){
+            ESP_LOGE(TAG, "WiFi Driver Connect Failed");
+        }
+        // AWS_Run();
     }
-    LoraRev();
-    AWS_Run();
+    else {
+        if(strcmp(loraRevFlag(DEV_NAME_1), DEV_NAME_1) == 0 || strcmp(loraRevFlag(DEV_NAME_2), DEV_NAME_2) == 0){
+            LoraTrans();
+        }
+    }
 }

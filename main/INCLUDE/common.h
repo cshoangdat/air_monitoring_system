@@ -8,6 +8,10 @@
                        MKSTR(FW_VERSION_MINOR)\
                        MKSTR(FW_VERSION_BUILD)
 
+#define MAC_CEN              "10:91:A8:01:5D:E0"
+#define MAC_1                "EC:DA:3B:AB:04:C8"  
+#define MAC_2                "EC:DA:3B:AB:0B:A8"  
+
 typedef struct
 {
     char* WifiName;
@@ -19,6 +23,9 @@ WifiData_t WifiData;
 
 typedef struct
 {
+    bool isDev1;
+    bool isDev2;
+    bool isDevCen;
     bool isWifiConnected;
     bool isI2cInit;
     bool isSht4xInit;
@@ -26,6 +33,7 @@ typedef struct
     bool isSpiInit;
     bool isSgp30Init;
     bool isLoraRev;
+    bool isNextion;
 }setUp_t;
 
 setUp_t setUp;
@@ -53,5 +61,12 @@ typedef struct
 }pageDev_t;
 
 pageDev_t pageDev;
+
+typedef struct
+{
+    bool isUpdate;
+}OTA_t;
+
+OTA_t OTA;
 
 #endif

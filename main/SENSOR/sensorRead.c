@@ -10,6 +10,11 @@
 
 static const char *TAG              =                   "SensorRead";
 
+TaskHandle_t BMETaskHandle;
+TaskHandle_t SGPTaskHandle;
+TaskHandle_t SHTTaskHandle;
+
+
 static void SHT4xTask(void *pvParameter){
     static sht4x_t sht4x_dev;
     if(setUp.isI2cInit == false){
@@ -26,6 +31,7 @@ static void SHT4xTask(void *pvParameter){
     while (1){
         ESP_ERROR_CHECK(sht4x_measure(&sht4x_dev, &sensorData.shtTemp, &sensorData.shtHumid));
         ESP_LOGI(TAG,"sht4x Sensor: %.2f °C, %.2f %%", sensorData.shtTemp, sensorData.shtHumid);
+        if(OTA.isUpdate == true){vTaskDelete(SHTTaskHandle);}
         vTaskDelay(1000/portTICK_PERIOD_MS);
         // printf("remaining memory of task Read SHT4x : %d byte",uxTaskGetStackHighWaterMark(NULL));
     }
@@ -52,7 +58,10 @@ static void BMP280Task(void *pvParameter){
             printf("Temperature/pressure reading failed\n");
             continue;
         }
+        // ?
+        // sensorData.bmp280Humid = 73 + (float)( rand() * ((int)((2.5 - (-2.5)) / 0.243) + 1) * 0.243 / RAND_MAX );
         ESP_LOGI(TAG,"BMP280 Sensor: Pressure: %.2f Pa", sensorData.bmp280Pressure);
+        if(OTA.isUpdate == true){vTaskDelete(BMETaskHandle);}
         vTaskDelay(1000/portTICK_PERIOD_MS);
         // printf("remaining memory of task Read BMP280 : %d byte",uxTaskGetStackHighWaterMark(NULL));
     }
@@ -83,12 +92,13 @@ static void SGP30Task(void *pvParameter){
         sensorData.sgp30Tvoc = main_sgp30_sensor.TVOC;
         ESP_LOGI(TAG, "TVOC: %d,  eCO2: %d",  sensorData.sgp30Tvoc, sensorData.sgp30Co2);
         // printf("remaining memory of task_read_sgp30 : %d byte",uxTaskGetStackHighWaterMark(NULL));
+        if(OTA.isUpdate == true){vTaskDelete(SGPTaskHandle);}
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
 void SensorRead(void){
-    xTaskCreate(BMP280Task, "BMP280Task", 1024*2, NULL, 9, NULL);
-    xTaskCreate(SHT4xTask,  "SHT4xTask",  1024*2, NULL, 9, NULL);
-    xTaskCreate(SGP30Task,  "SGP30Task",  1024*2, NULL, 9, NULL);
+    xTaskCreate(BMP280Task, "BMP280Task", 1024*2, NULL, 9, BMETaskHandle);
+    xTaskCreate(SHT4xTask,  "SHT4xTask",  1024*2, NULL, 9, SHTTaskHandle);
+    xTaskCreate(SGP30Task,  "SGP30Task",  1024*2, NULL, 9, SGPTaskHandle);
 }

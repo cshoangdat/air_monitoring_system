@@ -11,6 +11,7 @@ set(COMPONENT_SRCS
     "${CMAKE_CURRENT_LIST_DIR}/NEXTION/nextion.c"
     "${CMAKE_CURRENT_LIST_DIR}/LORA/loradev.c"
     "${CMAKE_CURRENT_LIST_DIR}/BASIC/appTask.c"
+    "${CMAKE_CURRENT_LIST_DIR}/OTA/ota.c"
     "app_main.c"
 )
 
@@ -25,6 +26,7 @@ set(COMPONENT_ADD_INCLUDEDIRS
     "${CMAKE_CURRENT_LIST_DIR}/WS2812B"
     "${CMAKE_CURRENT_LIST_DIR}/LORA"
     "${CMAKE_CURRENT_LIST_DIR}/BASIC"
+    "${CMAKE_CURRENT_LIST_DIR}/OTA"
     "${IDF_PATH}/components/freertos/include/freertos"
     "${IDF_PATH}/components/mbedtls"
     "${IDF_PATH}/components/driver" 

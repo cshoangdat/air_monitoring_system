@@ -12,9 +12,6 @@
 #include <sys/param.h>
 #include <stdio.h>
 #include <string.h>
-#include "esp_efuse.h"
-#include <assert.h>
-#include "esp_efuse_table.h"
 #include "cJSON.h"
 
 #include "INCLUDE/common.h"
@@ -24,8 +21,6 @@ static const char* TAG              =                 "AWS";
 static const char* TOPIC            =                 "Data";
 // static const char* TOPIC_RECIEVE    =                 "recieve";
 TaskHandle_t AWSTaskHandle;
-static char mac_str[18];
-static const char* base_mac                =                 "10:91:A8:01:5D:E0";
 
 esp_mqtt_client_handle_t client;
 esp_mqtt_event_handle_t event;
@@ -100,30 +95,13 @@ static void MQTT_Stop(void){
     esp_mqtt_client_destroy(client);
 }
 
-static void ReadBaseMac(void){
-    int mac_len = esp_efuse_get_field_size(ESP_EFUSE_OPTIONAL_UNIQUE_ID);
-    uint8_t mac[mac_len];
-    esp_err_t err = esp_efuse_read_field_blob(ESP_EFUSE_MAC_FACTORY, mac, sizeof(mac));
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to read MAC address from eFuse: %s", esp_err_to_name(err));
-        return;
-    }
-    else{
-        sprintf(mac_str, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        ESP_LOGI(TAG, "Base MAC: %s", mac_str);    
-    }
-}
-
 static void AWS_Task(void *arg){
-    bool is_dev_center = false;
     cJSON* sensor_data, *dev0;
     static char* pub_sensor_data = NULL;
-    ReadBaseMac();
-    if(strcmp(mac_str, base_mac) == 0) is_dev_center = true;
     MQTT_Start(AWS_URI);
     while(1){
-        if(is_dev_center == true){
-            if(sensorData.shtHumid != 0 && sensorData.shtTemp != 0 && sensorData.bmp280Pressure != 0 && sensorData.sgp30Co2 != 0 && sensorData.sgp30Tvoc != 0){
+        if(setUp.isDevCen == true){
+            if(sensorData.shtHumid != 0 && sensorData.shtTemp != 0 && sensorData.bmp280Pressure != 0 && sensorData.sgp30Co2 != 0){
                 dev0 = cJSON_CreateObject();
                 cJSON_AddItemToObject(dev0, "dev0", sensor_data = cJSON_CreateObject());
                 cJSON_AddNumberToObject(sensor_data, "temperature", sensorData.shtTemp);
@@ -140,9 +118,12 @@ static void AWS_Task(void *arg){
             }
         }
         if(setUp.isLoraRev == true){
-           int msg_id = esp_mqtt_client_publish(client, TOPIC, (char*)sensorData.dataSensorRev, 0, 0, 0);
-           ESP_LOGI(TAG,"sent publish Data successful, msg_id=%d", msg_id);
-           ESP_LOGI(TAG,"Data Sensor:%s", sensorData.dataSensorRev);
+                int msg_id = esp_mqtt_client_publish(client, TOPIC, (char*)sensorData.dataSensorRev, 0, 0, 0);
+                ESP_LOGI(TAG,"sent publish Data successful, msg_id=%d", msg_id);
+                ESP_LOGI(TAG,"Data Sensor:%s", sensorData.dataSensorRev);
+        }
+        if(OTA.isUpdate == true){
+            AWS_Stop();
         }
         vTaskDelay(500/portTICK_PERIOD_MS);
     // printf("remaining memory of task_transmit_to_AWS : %d byte",uxTaskGetStackHighWaterMark(NULL));
@@ -150,11 +131,9 @@ static void AWS_Task(void *arg){
 }
 
 void AWS_Run(void){
-    xTaskCreate(&AWS_Task, "AWS_Task", 1024*2, NULL, 4,  AWSTaskHandle);
+    xTaskCreate(&AWS_Task, "AWS_Task", 1024*2, NULL, 5,  AWSTaskHandle);
 }
 
 void AWS_Stop(void){
     vTaskDelete(AWSTaskHandle);
-    AWSTaskHandle = NULL;
-    esp_mqtt_client_stop(client);
 }

@@ -32,11 +32,18 @@
 #define NVS_KEY_WIFI_PASS                                       "WPASS"
 #define NVS_NAMESPACE_PAGE                                      "PAGE"
 #define NVS_KEY_PAGE_2                                          "PAGE2"
+#define NVS_KEY_PAGE_3                                          "PAGE3"
+#define NVS_NAMESPACE_DEV                                       "DEV"
+#define NVS_KEY_DEV_1                                           "DEV1"
+#define NVS_KEY_DEV_2                                           "DEV2"
 
 #define DEFAULT_SSID                                            "hihi"
 #define DEFAULT_PASS                                            "123456890"
 #define AWS_URI                                                 "mqtts://a3suuuxay09k3c-ats.iot.us-east-2.amazonaws.com"
 #define ESP_SOFT_RESET                                          "espreset"
 
+#define DEV_NAME_1                                              "dev1"
+#define DEV_NAME_2                                              "dev2"
 
+#define OTA_URL                                                 "https://raw.githubusercontent.com/cshoangdat/firmware_update/master/AIRFirmware.bin"
 #endif
